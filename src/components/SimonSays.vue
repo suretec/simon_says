@@ -1,10 +1,23 @@
 <template>
   <div id="game">
-    <div class="redSquare" v-bind:class="{red_active: active.red === true}"></div>
-    <div class="blueSquare" v-bind:class="{blue_active: active.blue === true}"></div>
-    <div class="yellowSquare" v-bind:class="{yellow_active: active.yellow === true}"></div>
-    <div class="greenSquare" v-bind:class="{green_active: active.green === true}"></div>
+
+    <!-- The Modal -->
+    <div id="myModal" class="modal"  v-bind:class="{hide_model: !showModel}"">
+      <!-- Modal content -->
+      <div class="modal-content">
+        <p>Level {{ userLevel }} </p>
+         <input type="button" class="close" value="begin" v-on:click="startGame(level)"">
+      </div>
+    </div>
+
+
+
+    <div class="red" v-bind:class="{red_active: active.red === true}" v-on:click= "handleClick($event)"></div>
+    <div class="blue" v-bind:class="{blue_active: active.blue === true}" v-on:click="handleClick($event)"></div>
+    <div class="yellow" v-bind:class="{yellow_active: active.yellow === true}" v-on:click="handleClick($event)"></div>
+    <div class="green" v-bind:class="{green_active: active.green === true}" v-on:click="handleClick($event)"></div>
   </div>
+
 </template>
 
 <script>
@@ -23,27 +36,41 @@ export default {
         blue: "#1e90ff",
         yellow: "#ffff00",
         green: "#32cd32"
-      }
+      },
+
+      colorSequence: [],
+      showModel: true,
+      clickCount: 0,
+      level: 0,
+      levelTracker: 1
     }
   },
 
-  mounted () {
-    const self = this
-    let i = 0
-    self.startGame(i)
-  },
+  computed: {
 
-
-
-  methods: {
-    startGame(i) {
+    currentIndex() {
       const self = this
 
+      return self.colorSequence[self.clickCount]
+    },
+
+    userLevel() {
+      const self = this
+
+      return (self.level + 1)
+    },
+  },
+
+  methods: {
+    startGame() {
+      const self = this
+
+      self.showModel = false
       let random = self.returnRandomHexCode()
       self.setElementToTrue(random)
 
-      if (i <= 10) { setTimeout(function() {
-        self.startGame(++i)
+      if (self.level) { setTimeout(function() {
+        self.startGame(self.level+=1)
         },2000)
       }
     },
@@ -58,11 +85,10 @@ export default {
     setElementToTrue(random) {
       const self = this
 
-      let keysLength = Object.keys(self.hexCodes).length
-
       Object.entries(self.hexCodes).forEach(key => {
         if (key[1] == random) {
           self.active[key[0]] = true
+          self.colorSequence.push(key[0])
           setTimeout(function() {
             self.toggleAllToFalse()
           }, 1000)
@@ -78,6 +104,25 @@ export default {
         self.active[key[0]] = false
         return self.active
       })
+    },
+
+    handleClick(target) {
+      const self = this
+
+      if (target.currentTarget.className === self.currentIndex) {
+        self.clickCount += 1
+        self.next()
+      } else {
+        console.log("lose")
+      }
+    },
+
+    next() {
+      const self = this
+
+      self.showModel = true
+      self.levelTracker +=1
+      self.level += 1
     }
 
   }
@@ -94,7 +139,7 @@ export default {
 }
 
 
-.redSquare {
+.red {
   float:left;
   position: relative;
   width: 35%;
@@ -105,7 +150,7 @@ export default {
   background-color: #B20000;
 }
 
-.blueSquare {
+.blue {
   float:left;
   position: relative;
   width: 35%;
@@ -116,7 +161,7 @@ export default {
   background-color: #2100B2;
 }
 
-.yellowSquare {
+.yellow {
   float:left;
   position: relative;
   width: 35%;
@@ -127,7 +172,7 @@ export default {
   background-color: #CCCC00;
 }
 
-.greenSquare {
+.green {
   float:left;
   position: relative;
   width: 35%;
@@ -152,6 +197,64 @@ export default {
 
 .yellow_active {
   background-color: #ffff00;
+}
+
+
+/* The Modal (background) */
+.modal {
+  position: fixed; /* Stay in place */
+  z-index: 1; /* Sit on top */
+  left: 0;
+  top: 0;
+  width: 100%; /* Full width */
+  height: 100%; /* Full height */
+  overflow: auto; /* Enable scroll if needed */
+  background-color: rgb(0,0,0); /* Fallback color */
+  background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+}
+
+/* Modal Content/Box */
+.modal-content {
+  background-color: #fefefe;
+  margin: 15% auto; /* 15% from the top and centered */
+  padding: 20px;
+  border: 1px solid #888;
+  width: 15%; /* Could be more or less, depending on screen size */
+  display: block;
+  height: 40%;
+}
+
+.hide_model{
+  display: none;
+}
+
+/* The Close Button */
+
+.close {
+  background: #3498db;
+  background-image: -webkit-linear-gradient(top, #3498db, #2980b9);
+  background-image: -moz-linear-gradient(top, #3498db, #2980b9);
+  background-image: -ms-linear-gradient(top, #3498db, #2980b9);
+  background-image: -o-linear-gradient(top, #3498db, #2980b9);
+  background-image: linear-gradient(to bottom, #3498db, #2980b9);
+  -webkit-border-radius: 28;
+  -moz-border-radius: 28;
+  border-radius: 28px;
+  font-family: Arial;
+  color: #ffffff;
+  font-size: 20px;
+  padding: 10px 20px 10px 20px;
+  text-decoration: none;
+}
+
+.close:hover {
+  background: #3cb0fd;
+  background-image: -webkit-linear-gradient(top, #3cb0fd, #3498db);
+  background-image: -moz-linear-gradient(top, #3cb0fd, #3498db);
+  background-image: -ms-linear-gradient(top, #3cb0fd, #3498db);
+  background-image: -o-linear-gradient(top, #3cb0fd, #3498db);
+  background-image: linear-gradient(to bottom, #3cb0fd, #3498db);
+  text-decoration: none;
 }
 
 </style>
