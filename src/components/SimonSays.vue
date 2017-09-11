@@ -5,12 +5,10 @@
     <div id="myModal" class="modal"  v-bind:class="{hide_model: !showModel}"">
       <!-- Modal content -->
       <div class="modal-content">
-        <p>Level {{ userLevel }} </p>
-         <input type="button" class="close" value="begin" v-on:click="startGame(level)"">
+        <p>Level {{ level }} </p>
+         <input type="button" class="close" value="begin" v-on:click="hideModel()"">
       </div>
     </div>
-
-
 
     <div class="red" v-bind:class="{red_active: active.red === true}" v-on:click= "handleClick($event)"></div>
     <div class="blue" v-bind:class="{blue_active: active.blue === true}" v-on:click="handleClick($event)"></div>
@@ -39,10 +37,10 @@ export default {
       },
 
       colorSequence: [],
-      showModel: true,
       clickCount: 0,
-      level: 0,
-      levelTracker: 1
+      round: 1,
+      showModel: true,
+      level: 1
     }
   },
 
@@ -52,27 +50,28 @@ export default {
       const self = this
 
       return self.colorSequence[self.clickCount]
-    },
-
-    userLevel() {
-      const self = this
-
-      return (self.level + 1)
-    },
+    }
   },
 
   methods: {
+
+    hideModel() {
+      const self = this
+      ++self.round
+      self.showModel = false
+      self.startGame()
+    },
+
     startGame() {
       const self = this
 
-      self.showModel = false
-      let random = self.returnRandomHexCode()
-      self.setElementToTrue(random)
-
-      if (self.level) { setTimeout(function() {
-        self.startGame(self.level+=1)
-        },2000)
-      }
+      setTimeout(function() {
+        let randomHex = self.returnRandomHexCode()
+        self.setElementToTrue(randomHex)
+        if (--self.level){
+          self.startGame()
+        }
+      }, 3000)
     },
 
     returnRandomHexCode() {
@@ -82,35 +81,33 @@ export default {
       return self.hexCodes[keys[ keys.length * Math.random() << 0]]
     },
 
-    setElementToTrue(random) {
+    setElementToTrue(randomHex) {
       const self = this
 
       Object.entries(self.hexCodes).forEach(key => {
-        if (key[1] == random) {
+        if (key[1] == randomHex) {
           self.active[key[0]] = true
           self.colorSequence.push(key[0])
-          setTimeout(function() {
-            self.toggleAllToFalse()
-          }, 1000)
+          self.toggleToFalse()
         }
-        return self.active
       })
     },
 
-    toggleAllToFalse() {
+    toggleToFalse(key) {
       const self = this
 
-      Object.entries(self.active).forEach(key => {
-        self.active[key[0]] = false
-        return self.active
-      })
+      setTimeout(function() {
+        Object.entries(self.active).forEach(key => {
+          self.active[key[0]] = false
+        })
+      }, 1000)
     },
 
     handleClick(target) {
       const self = this
 
       if (target.currentTarget.className === self.currentIndex) {
-        self.clickCount += 1
+        ++self.clickCount
         self.next()
       } else {
         console.log("lose")
@@ -119,10 +116,9 @@ export default {
 
     next() {
       const self = this
-
+      self.colorSequence = []
       self.showModel = true
-      self.levelTracker +=1
-      self.level += 1
+      self.level = self.round
     }
 
   }
