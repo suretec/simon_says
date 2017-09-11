@@ -71,7 +71,7 @@ export default {
         if (--self.level){
           self.startGame()
         }
-      }, 3000)
+      }, 2000)
     },
 
     returnRandomHexCode() {
