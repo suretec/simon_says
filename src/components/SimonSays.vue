@@ -7,6 +7,7 @@
       <div class="modal-content">
         <p>Level {{ level }} </p>
          <input type="button" class="close" value="begin" v-on:click="hideModel()"">
+         <p v-if=lose>You lose motherfucker!</p>
       </div>
     </div>
 
@@ -40,7 +41,8 @@ export default {
       clickCount: 0,
       round: 1,
       showModel: true,
-      level: 1
+      level: 1,
+      lose: false,
     }
   },
 
@@ -71,7 +73,7 @@ export default {
         if (--self.level){
           self.startGame()
         }
-      }, 2000)
+      }, 1500)
     },
 
     returnRandomHexCode() {
@@ -108,9 +110,9 @@ export default {
 
       if (target.currentTarget.className === self.currentIndex) {
         ++self.clickCount
-        self.next()
+        if(self.clickCount === self.colorSequence.length) { self.next() }
       } else {
-        console.log("lose")
+        self.restart()
       }
     },
 
@@ -119,8 +121,39 @@ export default {
       self.colorSequence = []
       self.showModel = true
       self.level = self.round
-    }
+      self.clickCount = 0
+    },
 
+    restart() {
+      const self = this
+      self.animate(10)
+      self.colorSequence = []
+      self.showModel = true
+      self.level = 1
+      self.clickCount = 0
+      self.lose = true
+      self.round = 1
+
+      setTimeout(function() {
+        self.lose = false
+        self.next()
+        // self.animate(10)
+      }, 2000)
+    },
+
+
+    animate(i) {
+      const self = this
+      self.lose = false
+
+      setTimeout(function() {
+        let randomHex = self.returnRandomHexCode()
+        self.setElementToTrue(randomHex)
+        if (--i){
+          self.animate(i--)
+        }
+      }, 1000000)
+    },
   }
 }
 </script>
