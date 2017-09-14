@@ -109,6 +109,7 @@ export default {
       const self = this
 
       if (target.currentTarget.className === self.currentIndex) {
+        self.highlight()
         ++self.clickCount
         if(self.clickCount === self.colorSequence.length) { self.next() }
       } else {
@@ -137,23 +138,21 @@ export default {
       setTimeout(function() {
         self.lose = false
         self.next()
-        // self.animate(10)
       }, 2000)
     },
 
-
-    animate(i) {
+    highlight() {
       const self = this
-      self.lose = false
 
-      setTimeout(function() {
-        let randomHex = self.returnRandomHexCode()
-        self.setElementToTrue(randomHex)
-        if (--i){
-          self.animate(i--)
+      Object.keys(self.active).forEach(key => {
+        if (self.currentIndex === key) {
+          self.active[key] = true
+          setTimeout(function() {
+            self.active[key] = false
+        },100)
         }
-      }, 1000000)
-    },
+      })
+    }
   }
 }
 </script>
