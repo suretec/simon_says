@@ -7,7 +7,7 @@
       <div class="modal-content">
         <p>Level {{ level }} </p>
          <input type="button" class="close" value="begin" v-on:click="hideModel()"">
-         <p v-if=lose>You lose motherfucker!</p>
+         <p v-if=lose>Oops!</p>
       </div>
     </div>
 
@@ -43,6 +43,8 @@ export default {
       showModel: true,
       level: 1,
       lose: false,
+      delay: 1500,
+      toggle: 1000,
     }
   },
 
@@ -52,6 +54,26 @@ export default {
       const self = this
 
       return self.colorSequence[self.clickCount]
+    },
+
+    delayTrue() {
+      const self = this
+
+      if (self.round % 10 === 0) {
+        return self.delay -= 100
+      } else {
+        return self.delay
+      }
+    },
+
+    delayToggle() {
+      const self = this
+
+      if (self.toggle % 10 === 0) {
+        return self.toggle -= 100
+      } else {
+        return self.toggle
+      }
     }
   },
 
@@ -73,7 +95,7 @@ export default {
         if (--self.level){
           self.startGame()
         }
-      }, 1500)
+      }, self.delay)
     },
 
     returnRandomHexCode() {
@@ -102,7 +124,7 @@ export default {
         Object.entries(self.active).forEach(key => {
           self.active[key[0]] = false
         })
-      }, 1000)
+      }, self.toggle)
     },
 
     handleClick(target) {
@@ -127,7 +149,6 @@ export default {
 
     restart() {
       const self = this
-      self.animate(10)
       self.colorSequence = []
       self.showModel = true
       self.level = 1
