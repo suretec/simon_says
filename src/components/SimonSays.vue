@@ -40,7 +40,7 @@ export default {
       colorSequence: [],
       clickCount: 0,
       round: 1,
-      showModel: true,
+      showModal: true,
       level: 1,
       lose: false,
       delay: 1500,
@@ -82,7 +82,7 @@ export default {
     hideModel() {
       const self = this
       ++self.round
-      self.showModel = false
+      self.showModal = false
       self.startGame()
     },
 
@@ -142,7 +142,7 @@ export default {
     next() {
       const self = this
       self.colorSequence = []
-      self.showModel = true
+      self.showModal = true
       self.level = self.round
       self.clickCount = 0
     },
@@ -150,7 +150,7 @@ export default {
     restart() {
       const self = this
       self.colorSequence = []
-      self.showModel = true
+      self.showModal = true
       self.level = 1
       self.clickCount = 0
       self.lose = true
