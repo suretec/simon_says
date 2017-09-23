@@ -95,7 +95,7 @@ export default {
         if (--self.level){
           self.startGame()
         }
-      }, self.delay)
+      }, self.delayToogle)
     },
 
     returnRandomHexCode() {
@@ -124,7 +124,7 @@ export default {
         Object.entries(self.active).forEach(key => {
           self.active[key[0]] = false
         })
-      }, self.toggle)
+      }, self.delayTrue)
     },
 
     handleClick(target) {
