@@ -2,11 +2,11 @@
   <div id="game">
 
     <!-- The Modal -->
-    <div id="myModal" class="modal"  v-bind:class="{hide_model: !showModel}"">
+    <div id="myModal" class="modal"  v-bind:class="{hide_model: !showModal}"">
       <!-- Modal content -->
       <div class="modal-content">
         <p>Level {{ level }} </p>
-         <input type="button" class="close" value="begin" v-on:click="hideModel()"">
+         <input type="button" class="close" value="begin" v-on:click="hideModal()"">
          <p v-if=lose>Oops!</p>
       </div>
     </div>
@@ -79,7 +79,7 @@ export default {
 
   methods: {
 
-    hideModel() {
+    hideModal() {
       const self = this
       ++self.round
       self.showModal = false
